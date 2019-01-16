@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="#{layoutMB.template}">
+
+    <ui:param name="renderBreadCrumb" value="false"/>
+    <ui:define name="title">
+        <h2 class="align-center">
+            TwitterBot Example
+        </h2>
+    </ui:define>
+
+    <ui:define name="body">
+        <div class="box">
+            <div class="box-header with-border">
+                <div class="box login-box-body">
+                    <h:form>
+                        <div class="ui-g ui-fluid">
+                            <div class="ui-g-12">
+                                <div class="material icon-left">
+                                    <p:inputText id="consumerKey" value="#{twitterBot.consumerKey}" required="true" requiredMessage="Please provide Consumer Key" placeholder="Provide Consumer Key">
+                                        <i class="fa fa-user" style="font-size: 16px;margin-top: 10px;"/>
+                                    </p:inputText>
+                                    <p:outputLabel for="consumerKey" value="Consumer Key"/>
+                                    <p:message for="consumerKey"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12">
+                                <div class="material icon-left">
+                                    <p:password id="consumerSecret" value="#{twitterBot.consumerSecret}"  autocomplete="new-password" required="true" requiredMessage="Please provide Consumer Secret" placeholder="Provide Consumer Secret">
+                                        <i class="fa fa-lock" style="font-size: 20px;margin-top: 10px"/>
+                                    </p:password>
+                                    <p:outputLabel for="consumerSecret" value="Consumer Secret"/>
+                                    <p:message for="consumerSecret"/>
+                                </div>
+                            </div>
+                            
+                            <div class="ui-g-12">
+                                <div class="material icon-left">
+                                    <p:inputText id="accessToken" value="#{twitterBot.accessToken}" required="true" requiredMessage="Please provide Access Token" placeholder="Provide Access Token">
+                                        <i class="fa fa-user" style="font-size: 16px;margin-top: 10px;"/>
+                                    </p:inputText>
+                                    <p:outputLabel for="accessToken" value="Access Token"/>
+                                    <p:message for="accessToken"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12">
+                                <div class="material icon-left">
+                                    <p:password id="accessTokenSecret" value="#{twitterBot.accessTokenSecret}"  autocomplete="new-password" required="true" requiredMessage="Please provide Access Token Secret" placeholder="Provide Access Token Secret">
+                                        <i class="fa fa-lock" style="font-size: 20px;margin-top: 10px"/>
+                                    </p:password>
+                                    <p:outputLabel for="accessTokenSecret" value="Access Token Secret"/>
+                                    <p:message for="accessTokenSecret"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12">
+                                <p:commandButton styleClass="btn btn-success btn-block" action="#{twitterBot.login}"
+                                                 onclick="showBar()" oncomplete="if(args.validationFailed){hideBar()}"
+                                                 value="Sign In" update="@all"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-header with-border">
+                <div class="ui-g ui-fluid">
+                    <p:panel id="tweet" toggleable="true" header="Status Update" styleClass="ui-md-6" rendered="#{twitterBot.loggedIn}">
+                        <p:panelGrid columns="2">
+                            <p:inputTextarea autoResize="true" placeholder="Please type in your status update" rows="2" cols="20" value="#{twitterBot.stat}"/>
+                            <p:commandButton styleClass="btn btn-primary" actionListener="#{twitterBot.sendTweet}" value="Send Tweet"/>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel toggleable="true" header="Timeline" styleClass="ui-md-6" rendered="#{twitterBot.loggedIn}">
+                        <p:dataScroller value="#{twitterBot.stats}" var="stat" chunkSize="5">
+                            <p:panelGrid columns="2">
+                                <p:graphicImage value="#{stat.user.profileImageURL}"/>
+                                <h:outputText value="#{stat.text}"/>
+                                <h:outputText value="#{stat.createdAt}"/>
+                            </p:panelGrid>
+                        </p:dataScroller>
+                        <p:commandButton styleClass="btn btn-primary" actionListener="#{twitterBot.homeTimeline}" value="Display Timeline"/>
+                    </p:panel>
+                    <p:panel toggleable="true" header="Search for Tweets" styleClass="ui-md-6" rendered="#{twitterBot.loggedIn}">
+                        <p:panelGrid columns="2">
+                                <p:inputText id="query" value="#{twitterBot.queryText}" required="true" requiredMessage="Please provide search query" placeholder="Provide search query"/>
+                                <p:commandButton styleClass="btn btn-primary" actionListener="#{twitterBot.searchForTweets}" value="Get Tweets"/>
+                        </p:panelGrid>
+                        <p:dataScroller value="#{twitterBot.searchStats}" var="stats" chunkSize="5">
+                            <p:panelGrid columns="2">
+                                <p:graphicImage value="#{stats.user.profileImageURL}"/>
+                                <h:outputText value="#{stats.text}"/>
+                                <h:outputText value="#{stats.createdAt}"/>
+                            </p:panelGrid>
+                        </p:dataScroller>
+                    </p:panel>
+                </div>
+            </div>
+        </div> 
+    </ui:define>
+
+</ui:composition>
